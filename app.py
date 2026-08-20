@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import joblib
 import os
+import matplotlib.pyplot as plt
 
 # =========================================================
 # PAGE CONFIGURATION
@@ -353,3 +354,65 @@ if st.button(
         "It is not a medical diagnosis and should not replace "
         "professional medical advice."
     )
+
+# =========================================================
+# EXPLAINABLE AI - FEATURE IMPORTANCE
+# =========================================================
+
+st.divider()
+
+st.subheader("🧠 Explainable AI")
+st.write(
+    "The chart below shows which clinical features were most "
+    "important to the Random Forest model when making predictions."
+)
+
+features = [
+    "age",
+    "sex",
+    "cp",
+    "trestbps",
+    "chol",
+    "fbs",
+    "restecg",
+    "thalach",
+    "exang",
+    "oldpeak",
+    "slope",
+    "ca",
+    "thal"
+]
+
+importance_df = pd.DataFrame({
+    "Feature": features,
+    "Importance": model.feature_importances_
+})
+
+importance_df = importance_df.sort_values(
+    by="Importance",
+    ascending=True
+)
+
+fig, ax = plt.subplots(figsize=(8, 6))
+
+ax.barh(
+    importance_df["Feature"],
+    importance_df["Importance"]
+)
+
+ax.set_xlabel("Feature Importance")
+ax.set_ylabel("Clinical Feature")
+ax.set_title("Random Forest Feature Importance")
+
+plt.tight_layout()
+
+st.pyplot(fig)
+
+# Show table
+st.dataframe(
+    importance_df.sort_values(
+        by="Importance",
+        ascending=False
+    ),
+    use_container_width=True
+)
