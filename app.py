@@ -1,40 +1,35 @@
-from flask import Flask, render_template, request, jsonify
-
-app = Flask(__name__)
-
-@app.route('/')
-def home():
-    return 'HealthSense Application is Running'
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-
 import streamlit as st
+import joblib
+import os
 
-# إعدادات الصفحة
 st.set_page_config(
     page_title="HealthSense AI",
     page_icon="❤️",
     layout="wide"
 )
 
-# عنوان المشروع
 st.title("❤️ HealthSense AI")
+st.subheader("Heart Disease Prediction System")
 
-st.markdown("## Heart Disease Prediction System")
-
-st.write(
-    """
-    Welcome to **HealthSense AI**.
-
-    This application predicts the probability of heart disease
-    using a Machine Learning model trained on clinical patient data.
-
-    Fill in the patient's information, then click **Predict**.
-    """
+# Model path
+MODEL_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "best_heart_model.pkl"
 )
 
-st.divider()
+# Load model
+try:
+    model = joblib.load(MODEL_PATH)
+    st.success("✅ AI Model Loaded Successfully!")
+except Exception as e:
+    st.error(f"❌ Could not load the model: {e}")
+    st.stop()
 
-st.info("👈 In the next step, we will add the patient information form.")
+st.write("""
+Welcome to **HealthSense AI**.
+
+This system uses Machine Learning to predict the risk
+of heart disease based on patient clinical data.
+""")
+
+st.info("🚧 Patient prediction form will be added in the next step.")
