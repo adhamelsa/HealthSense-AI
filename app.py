@@ -355,6 +355,7 @@ if st.button(
         "professional medical advice."
     )
 
+
 # =========================================================
 # EXPLAINABLE AI - FEATURE IMPORTANCE
 # =========================================================
@@ -362,9 +363,10 @@ if st.button(
 st.divider()
 
 st.subheader("🧠 Explainable AI")
+
 st.write(
-    "The chart below shows which clinical features were most "
-    "important to the Random Forest model when making predictions."
+    "These are the clinical features that had the greatest "
+    "overall influence on the Random Forest model."
 )
 
 features = [
@@ -383,6 +385,22 @@ features = [
     "thal"
 ]
 
+feature_names = {
+    "age": "Age",
+    "sex": "Sex",
+    "cp": "Chest Pain Type",
+    "trestbps": "Resting Blood Pressure",
+    "chol": "Cholesterol",
+    "fbs": "Fasting Blood Sugar",
+    "restecg": "Resting ECG",
+    "thalach": "Maximum Heart Rate",
+    "exang": "Exercise Induced Angina",
+    "oldpeak": "ST Depression",
+    "slope": "ST Slope",
+    "ca": "Major Vessels",
+    "thal": "Thal"
+}
+
 importance_df = pd.DataFrame({
     "Feature": features,
     "Importance": model.feature_importances_
@@ -390,29 +408,74 @@ importance_df = pd.DataFrame({
 
 importance_df = importance_df.sort_values(
     by="Importance",
+    ascending=False
+)
+
+# =========================================================
+# TOP 5 FEATURES
+# =========================================================
+
+st.markdown("### 🔝 Top 5 Important Factors")
+
+top5 = importance_df.head(5).copy()
+
+top5["Feature"] = top5["Feature"].map(feature_names)
+
+top5["Importance (%)"] = (
+    top5["Importance"] * 100
+).round(2)
+
+top5 = top5[
+    ["Feature", "Importance (%)"]
+]
+
+st.dataframe(
+    top5,
+    use_container_width=True,
+    hide_index=True
+)
+
+# =========================================================
+# FEATURE IMPORTANCE CHART
+# =========================================================
+
+st.markdown("### 📊 Feature Importance Chart")
+
+chart_df = importance_df.copy()
+
+chart_df["Feature"] = chart_df["Feature"].map(
+    feature_names
+)
+
+chart_df = chart_df.sort_values(
+    by="Importance",
     ascending=True
 )
 
-fig, ax = plt.subplots(figsize=(8, 6))
+fig, ax = plt.subplots(figsize=(9, 6))
 
 ax.barh(
-    importance_df["Feature"],
-    importance_df["Importance"]
+    chart_df["Feature"],
+    chart_df["Importance"]
 )
 
-ax.set_xlabel("Feature Importance")
+ax.set_xlabel("Importance")
 ax.set_ylabel("Clinical Feature")
-ax.set_title("Random Forest Feature Importance")
+ax.set_title(
+    "Random Forest Feature Importance"
+)
 
 plt.tight_layout()
 
 st.pyplot(fig)
 
-# Show table
-st.dataframe(
-    importance_df.sort_values(
-        by="Importance",
-        ascending=False
-    ),
-    use_container_width=True
+# =========================================================
+# EXPLANATION NOTE
+# =========================================================
+
+st.info(
+    "💡 Feature importance shows how strongly each feature "
+    "contributed to the Random Forest model's decisions overall. "
+    "It does not mean that a feature directly causes heart disease "
+    "or represents an individual patient's medical risk by itself."
 )
