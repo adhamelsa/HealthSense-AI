@@ -3,18 +3,20 @@ import pandas as pd
 import joblib
 import os
 
-# =========================
-# Page Configuration
-# =========================
+# =========================================================
+# PAGE CONFIGURATION
+# =========================================================
+
 st.set_page_config(
     page_title="HealthSense AI",
     page_icon="❤️",
     layout="wide"
 )
 
-# =========================
-# Load Model
-# =========================
+# =========================================================
+# LOAD MODEL
+# =========================================================
+
 MODEL_PATH = os.path.join(
     os.path.dirname(__file__),
     "best_heart_model.pkl"
@@ -26,26 +28,38 @@ except Exception as e:
     st.error(f"❌ Could not load the model: {e}")
     st.stop()
 
-# =========================
-# Title
-# =========================
+# =========================================================
+# HEADER
+# =========================================================
+
 st.title("❤️ HealthSense AI")
 st.subheader("Heart Disease Prediction System")
 
-st.write("""
-Enter the patient's clinical information below.
-The AI model will analyze the data and predict the likelihood of heart disease.
-""")
+st.write(
+    """
+    Welcome to **HealthSense AI**.
+
+    This application uses a Machine Learning model to estimate
+    the risk of heart disease based on clinical patient data.
+    """
+)
 
 st.divider()
 
-# =========================
-# Patient Information Form
-# =========================
+# =========================================================
+# PATIENT INFORMATION
+# =========================================================
+
+st.subheader("👤 Patient Information")
 
 col1, col2, col3 = st.columns(3)
 
+# -------------------------
+# Column 1
+# -------------------------
+
 with col1:
+
     age = st.number_input(
         "Age",
         min_value=1,
@@ -78,6 +92,9 @@ with col1:
         value=200
     )
 
+# -------------------------
+# Column 2
+# -------------------------
 
 with col2:
 
@@ -105,6 +122,9 @@ with col2:
         format_func=lambda x: "No" if x == 0 else "Yes"
     )
 
+# -------------------------
+# Column 3
+# -------------------------
 
 with col3:
 
@@ -133,11 +153,18 @@ with col3:
 
 st.divider()
 
-# =========================
-# Prediction
-# =========================
+# =========================================================
+# PREDICTION BUTTON
+# =========================================================
 
-if st.button("🔍 Predict Heart Disease Risk", use_container_width=True):
+if st.button(
+    "🔍 Predict Heart Disease Risk",
+    use_container_width=True
+):
+
+    # =====================================================
+    # CREATE INPUT DATAFRAME
+    # =====================================================
 
     input_data = pd.DataFrame(
         [[
@@ -156,44 +183,63 @@ if st.button("🔍 Predict Heart Disease Risk", use_container_width=True):
             thal
         ]],
         columns=[
-            'age',
-            'sex',
-            'cp',
-            'trestbps',
-            'chol',
-            'fbs',
-            'restecg',
-            'thalach',
-            'exang',
-            'oldpeak',
-            'slope',
-            'ca',
-            'thal'
+            "age",
+            "sex",
+            "cp",
+            "trestbps",
+            "chol",
+            "fbs",
+            "restecg",
+            "thalach",
+            "exang",
+            "oldpeak",
+            "slope",
+            "ca",
+            "thal"
         ]
     )
 
-    prediction = model.predict(input_data)[0]
+    # =====================================================
+    # MODEL PREDICTION
+    # =====================================================
 
-    # Get probability
-    if hasattr(model, "predict_proba"):
-        probabilities = model.predict_proba(input_data)[0]
+    try:
 
-        # Probability of class 1
-        risk_probability = probabilities[1] * 100
-    else:
-        risk_probability = None
+        prediction = model.predict(input_data)[0]
+
+        # Get probability if supported
+        if hasattr(model, "predict_proba"):
+
+            probabilities = model.predict_proba(input_data)[0]
+
+            risk_probability = probabilities[1] * 100
+
+        else:
+
+            risk_probability = None
+
+    except Exception as e:
+
+        st.error(f"❌ Prediction Error: {e}")
+        st.stop()
+
+    # =====================================================
+    # RESULT
+    # =====================================================
 
     st.divider()
 
-    # =========================
-    # Result Dashboard
-    # =========================
-
     st.subheader("🩺 Prediction Result")
+
+    # =====================================================
+    # HIGH RISK
+    # =====================================================
 
     if prediction == 1:
 
-        st.error("⚠️ Higher Risk of Heart Disease")
+        st.error(
+            "⚠️ Higher Risk of Heart Disease Detected"
+        )
 
         if risk_probability is not None:
 
@@ -203,18 +249,23 @@ if st.button("🔍 Predict Heart Disease Risk", use_container_width=True):
             )
 
             st.progress(
-                min(risk_probability / 100, 1.0)
+                min(max(risk_probability / 100, 0.0), 1.0)
             )
 
             st.write(
                 f"The model estimates a **{risk_probability:.2f}%** "
-                f"probability for the positive class."
+                "probability for the positive class."
             )
 
-    
+    # =====================================================
+    # LOW RISK
+    # =====================================================
+
     else:
 
-        st.success("✅ Lower Risk of Heart Disease")
+        st.success(
+            "✅ Lower Risk of Heart Disease Detected"
+        )
 
         if risk_probability is not None:
 
@@ -224,39 +275,81 @@ if st.button("🔍 Predict Heart Disease Risk", use_container_width=True):
             )
 
             st.progress(
-                min(risk_probability / 100, 1.0)
+                min(max(risk_probability / 100, 0.0), 1.0)
             )
 
             st.write(
-                f"The model estimates a **{risk_probability:.2f}%**
-                probability for the positive class."
+                f"The model estimates a **{risk_probability:.2f}%** "
+                "probability for the positive class."
             )
 
-    # =========================
-    # Patient Summary
-    # =========================
+    # =====================================================
+    # PATIENT SUMMARY
+    # =====================================================
+
+    st.divider()
 
     st.subheader("📋 Patient Summary")
 
     summary_col1, summary_col2, summary_col3 = st.columns(3)
 
+    # -------------------------
+    # Summary Column 1
+    # -------------------------
+
     with summary_col1:
+
         st.write(f"**Age:** {age}")
-        st.write(f"**Sex:** {'Male' if sex == 1 else 'Female'}")
+
+        st.write(
+            f"**Sex:** {'Male' if sex == 1 else 'Female'}"
+        )
+
         st.write(f"**Cholesterol:** {chol}")
 
+    # -------------------------
+    # Summary Column 2
+    # -------------------------
+
     with summary_col2:
-        st.write(f"**Blood Pressure:** {trestbps}")
-        st.write(f"**Maximum Heart Rate:** {thalach}")
-        st.write(f"**Chest Pain Type:** {cp}")
+
+        st.write(
+            f"**Blood Pressure:** {trestbps}"
+        )
+
+        st.write(
+            f"**Maximum Heart Rate:** {thalach}"
+        )
+
+        st.write(
+            f"**Chest Pain Type:** {cp}"
+        )
+
+    # -------------------------
+    # Summary Column 3
+    # -------------------------
 
     with summary_col3:
-        st.write(f"**Exercise Angina:** {'Yes' if exang == 1 else 'No'}")
-        st.write(f"**Oldpeak:** {oldpeak}")
-        st.write(f"**Major Vessels:** {ca}")
+
+        st.write(
+            f"**Exercise Angina:** {'Yes' if exang == 1 else 'No'}"
+        )
+
+        st.write(
+            f"**ST Depression:** {oldpeak}"
+        )
+
+        st.write(
+            f"**Major Vessels:** {ca}"
+        )
+
+    # =====================================================
+    # DISCLAIMER
+    # =====================================================
 
     st.warning(
-        "⚠️ This prediction is generated by a Machine Learning model "
-        "for educational and research purposes only. "
-        "It is not a medical diagnosis."
+        "⚠️ This prediction is generated by a Machine Learning "
+        "model for educational and research purposes only. "
+        "It is not a medical diagnosis and should not replace "
+        "professional medical advice."
     )
