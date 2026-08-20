@@ -207,8 +207,8 @@ if st.button("🔍 Predict Heart Disease Risk", use_container_width=True):
             )
 
             st.write(
-              f"The model estimates a **{risk_probability:.2f}%** "
-              f"probability for the positive class."
+                f"The model estimates a **{risk_probability:.2f}%**
+                probability for the positive class."
             )
 
     else:
