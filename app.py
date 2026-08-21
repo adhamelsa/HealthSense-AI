@@ -9,14 +9,14 @@ from sklearn.metrics import ConfusionMatrixDisplay
 
 
 # =========================================================
-# PAGE CONFIGURATION
+# PAGE CONFIG
 # =========================================================
 
 st.set_page_config(
     page_title="HealthSense AI",
     page_icon="❤️",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
 
@@ -31,10 +31,77 @@ MODEL_PATH = os.path.join(
 
 try:
     model = joblib.load(MODEL_PATH)
-
 except Exception as e:
     st.error(f"❌ Could not load the model: {e}")
     st.stop()
+
+
+# =========================================================
+# SESSION STATE
+# =========================================================
+
+if "prediction_done" not in st.session_state:
+    st.session_state.prediction_done = False
+
+if "prediction" not in st.session_state:
+    st.session_state.prediction = None
+
+if "risk_probability" not in st.session_state:
+    st.session_state.risk_probability = None
+
+if "patient_data" not in st.session_state:
+    st.session_state.patient_data = None
+
+
+# =========================================================
+# SIDEBAR
+# =========================================================
+
+with st.sidebar:
+
+    st.title("❤️ HealthSense AI")
+
+    st.caption(
+        "Intelligent Heart Disease Risk Assessment"
+    )
+
+    st.divider()
+
+    st.subheader("🧭 Navigation")
+
+    page = st.radio(
+        "Go to",
+        [
+            "🏠 Prediction",
+            "🧠 Explainable AI",
+            "📊 Model Performance",
+            "ℹ️ About Project"
+        ],
+        label_visibility="collapsed"
+    )
+
+    st.divider()
+
+    st.subheader("🤖 Model")
+
+    st.write("**Algorithm:** Random Forest")
+    st.write("**Framework:** Scikit-learn")
+    st.write("**Interface:** Streamlit")
+
+    st.divider()
+
+    st.success("🟢 Model Online")
+
+    st.caption(
+        "HealthSense AI v2.0"
+    )
+
+    st.divider()
+
+    st.warning(
+        "For educational and research purposes only. "
+        "This application is not a medical diagnosis."
+    )
 
 
 # =========================================================
@@ -48,409 +115,463 @@ st.subheader(
 )
 
 st.write(
-    "An AI-powered machine learning application that "
-    "analyzes clinical patient information and estimates "
-    "the likelihood of heart disease."
+    "An AI-powered machine learning application designed "
+    "to estimate heart disease risk from clinical patient data."
 )
 
-header_col1, header_col2, header_col3, header_col4 = st.columns(4)
+header1, header2, header3, header4 = st.columns(4)
 
-with header_col1:
-    st.info("✦ AI-POWERED")
+with header1:
+    st.success("🟢 System Online")
 
-with header_col2:
-    st.success("🌲 RANDOM FOREST")
+with header2:
+    st.info("🌲 Random Forest")
 
-with header_col3:
-    st.info("⚡ STREAMLIT")
+with header3:
+    st.info("⚡ Streamlit")
 
-with header_col4:
-    st.success("🟢 MODEL ONLINE")
+with header4:
+    st.success("🤖 AI Powered")
 
 st.divider()
 
 
 # =========================================================
-# PATIENT ASSESSMENT
+# PREDICTION PAGE
 # =========================================================
 
-st.header("🩺 Patient Assessment")
+if page == "🏠 Prediction":
 
-st.write(
-    "Enter the patient's clinical information below. "
-    "The trained machine learning model will analyze "
-    "the information and generate a risk estimate."
-)
+    st.header("🩺 Patient Risk Assessment")
 
-
-# =========================================================
-# BASIC INFORMATION
-# =========================================================
-
-st.subheader("👤 Basic Information")
-
-st.caption(
-    "Demographic and primary patient information."
-)
-
-col1, col2, col3 = st.columns(3)
-
-with col1:
-
-    age = st.number_input(
-        "Age",
-        min_value=1,
-        max_value=120,
-        value=50
+    st.write(
+        "Enter the patient's clinical information and "
+        "click **Analyze Heart Health** to generate a prediction."
     )
-
-with col2:
-
-    sex = st.selectbox(
-        "Sex",
-        options=[0, 1],
-        format_func=lambda x:
-        "Female" if x == 0 else "Male"
-    )
-
-with col3:
-
-    cp = st.selectbox(
-        "Chest Pain Type",
-        options=[0, 1, 2, 3]
-    )
-
-
-st.divider()
-
-
-# =========================================================
-# CLINICAL MEASUREMENTS
-# =========================================================
-
-st.subheader("❤️ Clinical Measurements")
-
-st.caption(
-    "Cardiovascular measurements and vital indicators."
-)
-
-col1, col2, col3 = st.columns(3)
-
-with col1:
-
-    trestbps = st.number_input(
-        "Resting Blood Pressure",
-        min_value=50,
-        max_value=250,
-        value=120
-    )
-
-with col2:
-
-    chol = st.number_input(
-        "Cholesterol",
-        min_value=100,
-        max_value=600,
-        value=200
-    )
-
-with col3:
-
-    thalach = st.number_input(
-        "Maximum Heart Rate",
-        min_value=50,
-        max_value=250,
-        value=150
-    )
-
-
-st.divider()
-
-
-# =========================================================
-# CARDIAC ASSESSMENT
-# =========================================================
-
-st.subheader("🫀 Cardiac Assessment")
-
-st.caption(
-    "Additional clinical indicators used by the model."
-)
-
-col1, col2, col3, col4 = st.columns(4)
-
-with col1:
-
-    fbs = st.selectbox(
-        "Fasting Blood Sugar > 120",
-        options=[0, 1],
-        format_func=lambda x:
-        "No" if x == 0 else "Yes"
-    )
-
-with col2:
-
-    restecg = st.selectbox(
-        "Resting ECG",
-        options=[0, 1, 2]
-    )
-
-with col3:
-
-    exang = st.selectbox(
-        "Exercise Induced Angina",
-        options=[0, 1],
-        format_func=lambda x:
-        "No" if x == 0 else "Yes"
-    )
-
-with col4:
-
-    slope = st.selectbox(
-        "ST Slope",
-        options=[0, 1, 2]
-    )
-
-
-col1, col2, col3 = st.columns(3)
-
-with col1:
-
-    oldpeak = st.number_input(
-        "ST Depression (Oldpeak)",
-        min_value=0.0,
-        max_value=10.0,
-        value=1.0,
-        step=0.1
-    )
-
-with col2:
-
-    ca = st.selectbox(
-        "Number of Major Vessels",
-        options=[0, 1, 2, 3, 4]
-    )
-
-with col3:
-
-    thal = st.selectbox(
-        "Thal",
-        options=[0, 1, 2, 3]
-    )
-
-
-st.divider()
-
-
-# =========================================================
-# PREDICTION BUTTON
-# =========================================================
-
-predict_button = st.button(
-    "🔍 ANALYZE HEART HEALTH",
-    use_container_width=True
-)
-
-
-# =========================================================
-# PREDICTION
-# =========================================================
-
-if predict_button:
-
-    # =====================================================
-    # CREATE INPUT DATA
-    # =====================================================
-
-    input_data = pd.DataFrame(
-        [[
-            age,
-            sex,
-            cp,
-            trestbps,
-            chol,
-            fbs,
-            restecg,
-            thalach,
-            exang,
-            oldpeak,
-            slope,
-            ca,
-            thal
-        ]],
-        columns=[
-            "age",
-            "sex",
-            "cp",
-            "trestbps",
-            "chol",
-            "fbs",
-            "restecg",
-            "thalach",
-            "exang",
-            "oldpeak",
-            "slope",
-            "ca",
-            "thal"
-        ]
-    )
-
-
-    # =====================================================
-    # MODEL PREDICTION
-    # =====================================================
-
-    try:
-
-        prediction = model.predict(
-            input_data
-        )[0]
-
-        risk_probability = None
-
-        if hasattr(
-            model,
-            "predict_proba"
-        ):
-
-            probabilities = model.predict_proba(
-                input_data
-            )[0]
-
-            risk_probability = (
-                probabilities[1] * 100
-            )
-
-    except Exception as e:
-
-        st.error(
-            f"❌ Prediction Error: {e}"
-        )
-
-        st.stop()
-
-
-    # =====================================================
-    # PREDICTION RESULT
-    # =====================================================
 
     st.divider()
 
-    st.header("📊 Prediction Result")
+    # =====================================================
+    # BASIC INFORMATION
+    # =====================================================
 
-    if prediction == 1:
+    st.subheader("👤 Basic Information")
 
-        st.error(
-            "⚠️ Higher Risk of Heart Disease Detected"
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+
+        age = st.number_input(
+            "Age",
+            min_value=1,
+            max_value=120,
+            value=50
         )
 
-    else:
+    with col2:
 
-        st.success(
-            "✅ Lower Risk of Heart Disease Detected"
+        sex = st.selectbox(
+            "Sex",
+            [0, 1],
+            format_func=lambda x:
+            "Female" if x == 0 else "Male"
         )
+
+    with col3:
+
+        cp = st.selectbox(
+            "Chest Pain Type",
+            [0, 1, 2, 3]
+        )
+
+    st.divider()
+
+    # =====================================================
+    # CLINICAL MEASUREMENTS
+    # =====================================================
+
+    st.subheader("❤️ Clinical Measurements")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+
+        trestbps = st.number_input(
+            "Resting Blood Pressure",
+            min_value=50,
+            max_value=250,
+            value=120
+        )
+
+    with col2:
+
+        chol = st.number_input(
+            "Cholesterol",
+            min_value=100,
+            max_value=600,
+            value=200
+        )
+
+    with col3:
+
+        thalach = st.number_input(
+            "Maximum Heart Rate",
+            min_value=50,
+            max_value=250,
+            value=150
+        )
+
+    st.divider()
+
+    # =====================================================
+    # CARDIAC INDICATORS
+    # =====================================================
+
+    st.subheader("🫀 Cardiac Indicators")
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+
+        fbs = st.selectbox(
+            "Fasting Blood Sugar > 120",
+            [0, 1],
+            format_func=lambda x:
+            "No" if x == 0 else "Yes"
+        )
+
+    with col2:
+
+        restecg = st.selectbox(
+            "Resting ECG",
+            [0, 1, 2]
+        )
+
+    with col3:
+
+        exang = st.selectbox(
+            "Exercise Induced Angina",
+            [0, 1],
+            format_func=lambda x:
+            "No" if x == 0 else "Yes"
+        )
+
+    with col4:
+
+        slope = st.selectbox(
+            "ST Slope",
+            [0, 1, 2]
+        )
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+
+        oldpeak = st.number_input(
+            "ST Depression (Oldpeak)",
+            min_value=0.0,
+            max_value=10.0,
+            value=1.0,
+            step=0.1
+        )
+
+    with col2:
+
+        ca = st.selectbox(
+            "Number of Major Vessels",
+            [0, 1, 2, 3, 4]
+        )
+
+    with col3:
+
+        thal = st.selectbox(
+            "Thal",
+            [0, 1, 2, 3]
+        )
+
+    st.divider()
+
+    # =====================================================
+    # ANALYZE BUTTON
+    # =====================================================
+
+    analyze = st.button(
+        "🔍 ANALYZE HEART HEALTH",
+        use_container_width=True
+    )
+
+    if analyze:
+
+        # -------------------------------------------------
+        # INPUT DATA
+        # -------------------------------------------------
+
+        input_data = pd.DataFrame(
+            [[
+                age,
+                sex,
+                cp,
+                trestbps,
+                chol,
+                fbs,
+                restecg,
+                thalach,
+                exang,
+                oldpeak,
+                slope,
+                ca,
+                thal
+            ]],
+            columns=[
+                "age",
+                "sex",
+                "cp",
+                "trestbps",
+                "chol",
+                "fbs",
+                "restecg",
+                "thalach",
+                "exang",
+                "oldpeak",
+                "slope",
+                "ca",
+                "thal"
+            ]
+        )
+
+        # -------------------------------------------------
+        # PREDICTION
+        # -------------------------------------------------
+
+        try:
+
+            prediction = model.predict(
+                input_data
+            )[0]
+
+            risk_probability = None
+
+            if hasattr(
+                model,
+                "predict_proba"
+            ):
+
+                probabilities = model.predict_proba(
+                    input_data
+                )[0]
+
+                risk_probability = (
+                    probabilities[1] * 100
+                )
+
+            st.session_state.prediction_done = True
+            st.session_state.prediction = prediction
+            st.session_state.risk_probability = risk_probability
+            st.session_state.patient_data = input_data
+
+        except Exception as e:
+
+            st.error(
+                f"❌ Prediction Error: {e}"
+            )
+
+            st.stop()
 
 
     # =====================================================
-    # RISK SCORE
+    # RESULT
     # =====================================================
 
-    if risk_probability is not None:
+    if st.session_state.prediction_done:
 
-        st.metric(
-            label="Heart Disease Risk Score",
-            value=f"{risk_probability:.2f}%"
-        )
+        st.divider()
+
+        st.header("🎯 Prediction Result")
+
+        prediction = st.session_state.prediction
+        risk_probability = st.session_state.risk_probability
+
+        # -------------------------------------------------
+        # RISK CLASSIFICATION
+        # -------------------------------------------------
+
+        if risk_probability is not None:
+
+            if risk_probability < 30:
+
+                risk_level = "LOW RISK"
+                risk_icon = "🟢"
+                risk_message = (
+                    "The model estimates a relatively "
+                    "low probability of heart disease."
+                )
+
+            elif risk_probability < 60:
+
+                risk_level = "MODERATE RISK"
+                risk_icon = "🟡"
+                risk_message = (
+                    "The model estimates a moderate "
+                    "probability of heart disease."
+                )
+
+            else:
+
+                risk_level = "HIGH RISK"
+                risk_icon = "🔴"
+                risk_message = (
+                    "The model estimates a relatively "
+                    "high probability of heart disease."
+                )
+
+        else:
+
+            risk_level = (
+                "POSITIVE"
+                if prediction == 1
+                else "NEGATIVE"
+            )
+
+            risk_icon = (
+                "🔴"
+                if prediction == 1
+                else "🟢"
+            )
+
+            risk_message = (
+                "Prediction generated by the machine "
+                "learning model."
+            )
+
+
+        # -------------------------------------------------
+        # RESULT METRICS
+        # -------------------------------------------------
+
+        result1, result2, result3 = st.columns(3)
+
+        with result1:
+
+            if risk_probability is not None:
+
+                st.metric(
+                    "Risk Score",
+                    f"{risk_probability:.2f}%"
+                )
+
+        with result2:
+
+            st.metric(
+                "Risk Level",
+                f"{risk_icon} {risk_level}"
+            )
+
+        with result3:
+
+            st.metric(
+                "Model",
+                "Random Forest"
+            )
+
 
         st.progress(
             min(
                 max(
-                    risk_probability / 100,
+                    (risk_probability or 0) / 100,
                     0.0
                 ),
                 1.0
             )
         )
 
-        st.caption(
-            f"The model estimates a "
-            f"{risk_probability:.2f}% probability "
-            f"for the positive class."
+        st.info(
+            risk_message
         )
 
 
-    # =====================================================
-    # RESULT TABS
-    # =====================================================
+        # -------------------------------------------------
+        # PREDICTION STATUS
+        # -------------------------------------------------
 
-    tab_patient, tab_xai, tab_performance = st.tabs(
-        [
-            "📋 Patient Summary",
-            "🧠 Explainable AI",
-            "📊 Model Performance"
-        ]
-    )
+        if prediction == 1:
 
-
-    # =====================================================
-    # TAB 1 — PATIENT SUMMARY
-    # =====================================================
-
-    with tab_patient:
-
-        st.subheader(
-            "📋 Patient Summary"
-        )
-
-        summary_col1, summary_col2, summary_col3 = st.columns(3)
-
-        with summary_col1:
-
-            st.write(
-                f"**Age:** {age}"
+            st.error(
+                "⚠️ Higher Risk of Heart Disease Detected"
             )
 
-            st.write(
-                f"**Sex:** "
-                f"{'Male' if sex == 1 else 'Female'}"
+        else:
+
+            st.success(
+                "✅ Lower Risk of Heart Disease Detected"
             )
 
-            st.write(
-                f"**Cholesterol:** {chol}"
+
+        st.divider()
+
+        # -------------------------------------------------
+        # PATIENT SUMMARY
+        # -------------------------------------------------
+
+        st.subheader("📋 Patient Summary")
+
+        summary1, summary2, summary3, summary4 = st.columns(4)
+
+        with summary1:
+
+            st.metric(
+                "Age",
+                age
             )
 
-        with summary_col2:
+        with summary2:
 
-            st.write(
-                f"**Blood Pressure:** "
-                f"{trestbps}"
+            st.metric(
+                "Sex",
+                "Male" if sex == 1 else "Female"
             )
 
-            st.write(
-                f"**Maximum Heart Rate:** "
-                f"{thalach}"
+        with summary3:
+
+            st.metric(
+                "Cholesterol",
+                f"{chol} mg/dl"
             )
 
-            st.write(
-                f"**Chest Pain Type:** "
-                f"{cp}"
+        with summary4:
+
+            st.metric(
+                "Max Heart Rate",
+                thalach
             )
 
-        with summary_col3:
+
+        st.write("")
+
+        summary1, summary2, summary3, summary4 = st.columns(4)
+
+        with summary1:
+
+            st.write(
+                f"**Blood Pressure:** {trestbps}"
+            )
+
+        with summary2:
+
+            st.write(
+                f"**Chest Pain Type:** {cp}"
+            )
+
+        with summary3:
 
             st.write(
                 f"**Exercise Angina:** "
                 f"{'Yes' if exang == 1 else 'No'}"
             )
 
-            st.write(
-                f"**ST Depression:** "
-                f"{oldpeak}"
-            )
+        with summary4:
 
             st.write(
-                f"**Major Vessels:** "
-                f"{ca}"
+                f"**ST Depression:** {oldpeak}"
             )
 
 
@@ -463,386 +584,508 @@ if predict_button:
         )
 
 
-    # =====================================================
-    # TAB 2 — EXPLAINABLE AI
-    # =====================================================
+# =========================================================
+# EXPLAINABLE AI
+# =========================================================
 
-    with tab_xai:
+elif page == "🧠 Explainable AI":
 
-        st.subheader(
-            "🧠 Explainable AI"
+    st.header("🧠 Explainable AI")
+
+    st.write(
+        "Understand which clinical features had the greatest "
+        "overall influence on the Random Forest model."
+    )
+
+    st.divider()
+
+    features = [
+        "age",
+        "sex",
+        "cp",
+        "trestbps",
+        "chol",
+        "fbs",
+        "restecg",
+        "thalach",
+        "exang",
+        "oldpeak",
+        "slope",
+        "ca",
+        "thal"
+    ]
+
+    feature_names = {
+
+        "age": "Age",
+        "sex": "Sex",
+        "cp": "Chest Pain Type",
+        "trestbps": "Resting Blood Pressure",
+        "chol": "Cholesterol",
+        "fbs": "Fasting Blood Sugar",
+        "restecg": "Resting ECG",
+        "thalach": "Maximum Heart Rate",
+        "exang": "Exercise Induced Angina",
+        "oldpeak": "ST Depression",
+        "slope": "ST Slope",
+        "ca": "Major Vessels",
+        "thal": "Thal"
+    }
+
+    try:
+
+        importance_df = pd.DataFrame(
+            {
+                "Feature": features,
+                "Importance": model.feature_importances_
+            }
         )
 
-        st.write(
-            "These are the clinical features that had "
-            "the greatest overall influence on the "
-            "Random Forest model."
+    except AttributeError:
+
+        st.error(
+            "Feature importance is not available "
+            "for the current model."
         )
 
+        st.stop()
 
-        # -------------------------------------------------
-        # FEATURES
-        # -------------------------------------------------
 
-        features = [
-            "age",
-            "sex",
-            "cp",
-            "trestbps",
-            "chol",
-            "fbs",
-            "restecg",
-            "thalach",
-            "exang",
-            "oldpeak",
-            "slope",
-            "ca",
-            "thal"
-        ]
-
-
-        feature_names = {
-
-            "age":
-            "Age",
-
-            "sex":
-            "Sex",
-
-            "cp":
-            "Chest Pain Type",
-
-            "trestbps":
-            "Resting Blood Pressure",
-
-            "chol":
-            "Cholesterol",
-
-            "fbs":
-            "Fasting Blood Sugar",
-
-            "restecg":
-            "Resting ECG",
-
-            "thalach":
-            "Maximum Heart Rate",
-
-            "exang":
-            "Exercise Induced Angina",
-
-            "oldpeak":
-            "ST Depression",
-
-            "slope":
-            "ST Slope",
-
-            "ca":
-            "Major Vessels",
-
-            "thal":
-            "Thal"
-        }
-
-
-        # -------------------------------------------------
-        # FEATURE IMPORTANCE
-        # -------------------------------------------------
-
-        try:
-
-            feature_importances = (
-                model.feature_importances_
-            )
-
-        except AttributeError:
-
-            st.warning(
-                "Feature importance is not available "
-                "for this model."
-            )
-
-            feature_importances = None
-
-
-        if feature_importances is not None:
-
-            importance_df = pd.DataFrame(
-                {
-                    "Feature": features,
-                    "Importance": feature_importances
-                }
-            )
-
-
-            importance_df = importance_df.sort_values(
-                by="Importance",
-                ascending=False
-            )
-
-
-            # ---------------------------------------------
-            # TOP 5
-            # ---------------------------------------------
-
-            st.markdown(
-                "### 🔝 Top 5 Important Factors"
-            )
-
-            top5 = importance_df.head(
-                5
-            ).copy()
-
-
-            top5["Feature"] = top5[
-                "Feature"
-            ].map(
-                feature_names
-            )
-
-
-            top5["Importance (%)"] = (
-                top5["Importance"] * 100
-            ).round(2)
-
-
-            top5 = top5[
-                [
-                    "Feature",
-                    "Importance (%)"
-                ]
-            ]
-
-
-            st.dataframe(
-                top5,
-                use_container_width=True,
-                hide_index=True
-            )
-
-
-            # ---------------------------------------------
-            # CHART
-            # ---------------------------------------------
-
-            st.markdown(
-                "### 📊 Feature Importance Chart"
-            )
-
-            chart_df = importance_df.copy()
-
-
-            chart_df["Feature"] = chart_df[
-                "Feature"
-            ].map(
-                feature_names
-            )
-
-
-            chart_df = chart_df.sort_values(
-                by="Importance",
-                ascending=True
-            )
-
-
-            fig, ax = plt.subplots(
-                figsize=(9, 6)
-            )
-
-
-            ax.barh(
-                chart_df["Feature"],
-                chart_df["Importance"]
-            )
-
-
-            ax.set_xlabel(
-                "Importance"
-            )
-
-            ax.set_ylabel(
-                "Clinical Feature"
-            )
-
-            ax.set_title(
-                "Random Forest Feature Importance"
-            )
-
-
-            plt.tight_layout()
-
-
-            st.pyplot(
-                fig
-            )
-
-
-            plt.close(
-                fig
-            )
-
-
-            st.info(
-                "💡 Feature importance shows how strongly "
-                "each feature contributed to the Random "
-                "Forest model's decisions overall. It does "
-                "not mean that a feature directly causes "
-                "heart disease."
-            )
+    importance_df = importance_df.sort_values(
+        "Importance",
+        ascending=False
+    )
 
 
     # =====================================================
-    # TAB 3 — MODEL PERFORMANCE
+    # TOP FACTORS
     # =====================================================
 
-    with tab_performance:
+    st.subheader("🔝 Top Model Drivers")
 
-        st.subheader(
-            "📊 Model Performance"
-        )
+    top5 = importance_df.head(5).copy()
 
-        st.write(
-            "The following metrics were obtained by "
-            "evaluating the tuned Random Forest model "
-            "on the clean test dataset."
-        )
+    top5["Feature"] = top5[
+        "Feature"
+    ].map(
+        feature_names
+    )
 
-
-        # -------------------------------------------------
-        # PERFORMANCE METRICS
-        # -------------------------------------------------
-
-        metric_col1, metric_col2, metric_col3, metric_col4, metric_col5 = st.columns(5)
+    top5["Importance"] = (
+        top5["Importance"] * 100
+    ).round(2)
 
 
-        metric_col1.metric(
+    driver_cols = st.columns(5)
+
+    for i, row in top5.reset_index(drop=True).iterrows():
+
+        with driver_cols[i]:
+
+            st.metric(
+                row["Feature"],
+                f"{row['Importance']:.2f}%"
+            )
+
+
+    st.divider()
+
+
+    # =====================================================
+    # FEATURE IMPORTANCE CHART
+    # =====================================================
+
+    st.subheader(
+        "📊 Feature Importance"
+    )
+
+    chart_df = importance_df.copy()
+
+    chart_df["Feature"] = chart_df[
+        "Feature"
+    ].map(
+        feature_names
+    )
+
+    chart_df = chart_df.sort_values(
+        "Importance",
+        ascending=True
+    )
+
+    fig, ax = plt.subplots(
+        figsize=(10, 7)
+    )
+
+    ax.barh(
+        chart_df["Feature"],
+        chart_df["Importance"]
+    )
+
+    ax.set_xlabel(
+        "Importance"
+    )
+
+    ax.set_ylabel(
+        "Clinical Feature"
+    )
+
+    ax.set_title(
+        "Random Forest Feature Importance"
+    )
+
+    plt.tight_layout()
+
+    st.pyplot(fig)
+
+    plt.close(fig)
+
+
+    st.info(
+        "💡 Feature importance describes the model's "
+        "overall use of each feature. It does not establish "
+        "causation and should not be interpreted as an "
+        "individual medical risk factor."
+    )
+
+
+# =========================================================
+# MODEL PERFORMANCE
+# =========================================================
+
+elif page == "📊 Model Performance":
+
+    st.header("📊 Model Performance")
+
+    st.write(
+        "Evaluation results obtained from the tuned "
+        "Random Forest model on the clean test dataset."
+    )
+
+    st.divider()
+
+
+    # =====================================================
+    # KPI CARDS
+    # =====================================================
+
+    col1, col2, col3, col4, col5 = st.columns(5)
+
+    with col1:
+
+        st.metric(
             "Accuracy",
             "78.69%"
         )
 
-        metric_col2.metric(
+    with col2:
+
+        st.metric(
             "Precision",
             "81.25%"
         )
 
-        metric_col3.metric(
+    with col3:
+
+        st.metric(
             "Recall",
             "78.79%"
         )
 
-        metric_col4.metric(
+    with col4:
+
+        st.metric(
             "F1-Score",
             "80.00%"
         )
 
-        metric_col5.metric(
+    with col5:
+
+        st.metric(
             "ROC-AUC",
             "85.93%"
         )
 
 
-        st.divider()
+    st.divider()
 
 
-        # -------------------------------------------------
-        # CONFUSION MATRIX
-        # -------------------------------------------------
+    # =====================================================
+    # CONFUSION MATRIX
+    # =====================================================
 
-        st.subheader(
-            "🔢 Confusion Matrix"
-        )
+    st.subheader(
+        "🔢 Confusion Matrix"
+    )
 
+    cm = np.array(
+        [
+            [22, 6],
+            [7, 26]
+        ]
+    )
 
-        cm = np.array(
-            [
-                [22, 6],
-                [7, 26]
-            ]
-        )
+    cm_col1, cm_col2 = st.columns(
+        [2, 1]
+    )
 
+    with cm_col1:
 
-        fig_cm, ax_cm = plt.subplots(
+        fig, ax = plt.subplots(
             figsize=(6, 5)
         )
 
-
         display = ConfusionMatrixDisplay(
             confusion_matrix=cm,
-
             display_labels=[
                 "No Disease",
                 "Heart Disease"
             ]
         )
 
-
         display.plot(
-            ax=ax_cm,
-
+            ax=ax,
             cmap="Blues",
-
             colorbar=False
         )
 
-
-        ax_cm.set_title(
+        ax.set_title(
             "Confusion Matrix"
         )
 
+        st.pyplot(fig)
 
-        st.pyplot(
-            fig_cm
+        plt.close(fig)
+
+
+    with cm_col2:
+
+        st.metric(
+            "Correct Predictions",
+            "48"
+        )
+
+        st.metric(
+            "Incorrect Predictions",
+            "13"
+        )
+
+        st.metric(
+            "Test Samples",
+            "61"
         )
 
 
-        plt.close(
-            fig_cm
-        )
+    st.divider()
 
 
-        st.caption(
-            "The model correctly classified "
-            "48 out of 61 test samples."
-        )
+    # =====================================================
+    # METRIC EXPLANATION
+    # =====================================================
 
+    st.subheader(
+        "📈 What Do These Metrics Mean?"
+    )
 
-        # -------------------------------------------------
-        # EVALUATION SUMMARY
-        # -------------------------------------------------
-
-        st.subheader(
-            "📈 Model Evaluation Summary"
-        )
-
+    with st.expander(
+        "Accuracy"
+    ):
 
         st.write(
-            """
-            **Accuracy (78.69%)**  
-            Overall percentage of correct predictions.
-
-            **Precision (81.25%)**  
-            When the model predicts heart disease,
-            how often the prediction is correct.
-
-            **Recall (78.79%)**  
-            Percentage of actual positive cases
-            correctly detected.
-
-            **F1-Score (80.00%)**  
-            Balance between precision and recall.
-
-            **ROC-AUC (85.93%)**  
-            Ability of the model to distinguish
-            between the two classes.
-            """
+            "The percentage of all test samples that "
+            "were classified correctly."
         )
 
+    with st.expander(
+        "Precision"
+    ):
+
+        st.write(
+            "Among cases predicted as heart disease, "
+            "the percentage that were actually positive."
+        )
+
+    with st.expander(
+        "Recall"
+    ):
+
+        st.write(
+            "The percentage of actual heart disease cases "
+            "that were correctly detected."
+        )
+
+    with st.expander(
+        "F1-Score"
+    ):
+
+        st.write(
+            "The harmonic mean of precision and recall, "
+            "providing a balanced measure."
+        )
+
+    with st.expander(
+        "ROC-AUC"
+    ):
+
+        st.write(
+            "Measures how effectively the model separates "
+            "the two classes across different thresholds."
+        )
+
+
+    st.info(
+        "These evaluation results were obtained after "
+        "removing duplicate records from the dataset "
+        "to reduce potential data leakage and provide "
+        "a more realistic estimate of model performance."
+    )
+
+
+# =========================================================
+# ABOUT PROJECT
+# =========================================================
+
+elif page == "ℹ️ About Project":
+
+    st.header("ℹ️ About HealthSense AI")
+
+    st.write(
+        """
+        **HealthSense AI** is a machine learning application
+        developed to demonstrate how artificial intelligence
+        can be applied to cardiovascular risk assessment.
+        """
+    )
+
+    st.divider()
+
+
+    # =====================================================
+    # PROJECT PIPELINE
+    # =====================================================
+
+    st.subheader(
+        "🔬 Machine Learning Pipeline"
+    )
+
+    pipeline1, pipeline2, pipeline3, pipeline4, pipeline5 = st.columns(5)
+
+    with pipeline1:
 
         st.info(
-            "These evaluation results were obtained after "
-            "removing duplicate records from the dataset "
-            "to reduce potential data leakage and provide "
-            "a more realistic estimate of model performance."
+            "📥\n\n"
+            "**Patient Data**"
         )
+
+    with pipeline2:
+
+        st.info(
+            "🧹\n\n"
+            "**Data Preparation**"
+        )
+
+    with pipeline3:
+
+        st.info(
+            "🌲\n\n"
+            "**Random Forest**"
+        )
+
+    with pipeline4:
+
+        st.info(
+            "🎯\n\n"
+            "**Prediction**"
+        )
+
+    with pipeline5:
+
+        st.info(
+            "🧠\n\n"
+            "**Explanation**"
+        )
+
+
+    st.divider()
+
+
+    # =====================================================
+    # TECHNOLOGIES
+    # =====================================================
+
+    st.subheader(
+        "🛠️ Technologies"
+    )
+
+    tech1, tech2, tech3, tech4 = st.columns(4)
+
+    with tech1:
+
+        st.metric(
+            "Language",
+            "Python"
+        )
+
+    with tech2:
+
+        st.metric(
+            "ML",
+            "Scikit-learn"
+        )
+
+    with tech3:
+
+        st.metric(
+            "Data",
+            "Pandas / NumPy"
+        )
+
+    with tech4:
+
+        st.metric(
+            "Deployment",
+            "Streamlit"
+        )
+
+
+    st.divider()
+
+
+    # =====================================================
+    # PROJECT FEATURES
+    # =====================================================
+
+    st.subheader(
+        "✨ Key Features"
+    )
+
+    st.write(
+        """
+        - ❤️ Heart disease risk prediction
+        - 🎯 Probability-based risk estimation
+        - 🌲 Random Forest machine learning model
+        - 🧠 Feature importance for explainability
+        - 📊 Accuracy, Precision, Recall and F1-Score
+        - 📈 ROC-AUC evaluation
+        - 🔢 Confusion Matrix
+        - 📋 Patient summary
+        - ☁️ Streamlit Cloud deployment
+        """
+    )
+
+
+    st.divider()
+
+
+    st.subheader(
+        "⚠️ Important Disclaimer"
+    )
+
+    st.warning(
+        "HealthSense AI is an educational and research "
+        "project. Its predictions are not medical diagnoses "
+        "and should not be used as a substitute for professional "
+        "medical advice."
+    )
 
 
 # =========================================================
@@ -852,15 +1095,14 @@ if predict_button:
 st.divider()
 
 st.caption(
-    "❤️ HealthSense AI | Heart Disease Prediction"
+    "❤️ HealthSense AI v2.0"
 )
 
 st.caption(
-    "Built with Python • Pandas • NumPy • Scikit-learn • "
+    "Python • Pandas • NumPy • Scikit-learn • "
     "Joblib • Matplotlib • Streamlit"
 )
 
 st.caption(
-    "⚠️ For educational and research purposes only. "
-    "This application is not a medical diagnosis."
+    "Educational & Research Project"
 )
