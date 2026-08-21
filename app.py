@@ -4,6 +4,13 @@ import joblib
 import os
 import matplotlib.pyplot as plt
 
+from sklearn.metrics import (
+    confusion_matrix,
+    ConfusionMatrixDisplay,
+    roc_curve,
+    auc
+)
+
 # =========================================================
 # PAGE CONFIGURATION
 # =========================================================
@@ -411,6 +418,103 @@ importance_df = importance_df.sort_values(
     ascending=False
 )
 
+# =========================================================
+# MODEL PERFORMANCE DASHBOARD
+# =========================================================
+
+st.divider()
+
+st.subheader("📊 Model Performance")
+
+st.write(
+    "The following metrics were obtained by evaluating the "
+    "tuned Random Forest model on the clean test dataset."
+)
+
+# Performance metrics
+metric_col1, metric_col2, metric_col3, metric_col4, metric_col5 = st.columns(5)
+
+metric_col1.metric(
+    "Accuracy",
+    "78.69%"
+)
+
+metric_col2.metric(
+    "Precision",
+    "81.25%"
+)
+
+metric_col3.metric(
+    "Recall",
+    "78.79%"
+)
+
+metric_col4.metric(
+    "F1-Score",
+    "80.00%"
+)
+
+metric_col5.metric(
+    "ROC-AUC",
+    "85.93%"
+)
+
+st.divider()
+
+# =========================================================
+# CONFUSION MATRIX
+# =========================================================
+
+st.subheader("🔢 Confusion Matrix")
+
+# Results from the clean test set
+cm = [
+    [22, 6],
+    [7, 26]
+]
+
+fig_cm, ax_cm = plt.subplots(figsize=(6, 5))
+
+display = ConfusionMatrixDisplay(
+    confusion_matrix=cm,
+    display_labels=["No Disease", "Heart Disease"]
+)
+
+display.plot(
+    ax=ax_cm,
+    cmap="Blues",
+    colorbar=False
+)
+
+ax_cm.set_title("Confusion Matrix")
+
+st.pyplot(fig_cm)
+
+st.caption(
+    "The model correctly classified 48 out of 61 test samples."
+)
+
+# =========================================================
+# PERFORMANCE EXPLANATION
+# =========================================================
+
+st.subheader("📈 Model Evaluation Summary")
+
+st.write(
+    """
+    - **Accuracy (78.69%)**: Overall percentage of correct predictions.
+    - **Precision (81.25%)**: When the model predicts heart disease, how often the prediction is correct.
+    - **Recall (78.79%)**: Percentage of actual positive cases correctly detected.
+    - **F1-Score (80.00%)**: Balance between precision and recall.
+    - **ROC-AUC (85.93%)**: Ability of the model to distinguish between the two classes.
+    """
+)
+
+st.info(
+    "These evaluation results were obtained after removing duplicate "
+    "records from the dataset to reduce data leakage and provide a "
+    "more realistic estimate of model performance."
+)
 # =========================================================
 # TOP 5 FEATURES
 # =========================================================
