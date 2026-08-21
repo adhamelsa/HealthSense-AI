@@ -21,371 +21,6 @@ st.set_page_config(
 
 
 # =========================================================
-# CUSTOM CSS
-# =========================================================
-
-st.markdown(
-    """
-    <style>
-
-    /* =====================================================
-       GLOBAL
-    ===================================================== */
-
-    .stApp {
-        background:
-            radial-gradient(
-                circle at top right,
-                rgba(20, 184, 166, 0.08),
-                transparent 35%
-            ),
-            radial-gradient(
-                circle at bottom left,
-                rgba(37, 99, 235, 0.07),
-                transparent 35%
-            ),
-            #f8fafc;
-    }
-
-    .block-container {
-        max-width: 1250px;
-        padding-top: 2rem;
-        padding-bottom: 3rem;
-    }
-
-
-    /* =====================================================
-       HERO
-    ===================================================== */
-
-    .hero {
-        background:
-            linear-gradient(
-                135deg,
-                #020617 0%,
-                #0f172a 45%,
-                #134e4a 100%
-            );
-
-        border-radius: 28px;
-        padding: 2.4rem;
-        margin-bottom: 2rem;
-
-        box-shadow:
-            0 20px 50px rgba(15, 23, 42, 0.18);
-
-        color: white;
-        border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .hero-title {
-        font-size: 2.8rem;
-        font-weight: 850;
-        letter-spacing: -1px;
-        line-height: 1.1;
-    }
-
-    .hero-subtitle {
-        font-size: 1.15rem;
-        color: rgba(255,255,255,0.75);
-        margin-top: 0.6rem;
-    }
-
-    .hero-description {
-        max-width: 700px;
-        margin-top: 1rem;
-        color: rgba(255,255,255,0.62);
-        line-height: 1.6;
-    }
-
-    .badge {
-        display: inline-block;
-        padding: 0.45rem 0.8rem;
-        margin-top: 1.2rem;
-        margin-right: 0.4rem;
-
-        border-radius: 999px;
-
-        background: rgba(255,255,255,0.09);
-        border: 1px solid rgba(255,255,255,0.14);
-
-        color: white;
-        font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-    }
-
-    .status-card {
-        background: rgba(255,255,255,0.08);
-        border: 1px solid rgba(255,255,255,0.14);
-
-        border-radius: 18px;
-
-        padding: 1.2rem;
-
-        text-align: center;
-
-        margin-top: 0.5rem;
-    }
-
-    .status-title {
-        font-size: 0.72rem;
-        color: rgba(255,255,255,0.55);
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    .status-value {
-        margin-top: 0.4rem;
-        font-size: 1.1rem;
-        font-weight: 750;
-    }
-
-
-    /* =====================================================
-       SECTION
-    ===================================================== */
-
-    .section-title {
-        font-size: 1.5rem;
-        font-weight: 800;
-        color: #0f172a;
-        margin-top: 1rem;
-    }
-
-    .section-description {
-        color: #64748b;
-        margin-bottom: 1.4rem;
-        line-height: 1.6;
-    }
-
-
-    /* =====================================================
-       INPUT CARDS
-    ===================================================== */
-
-    .input-card {
-        background: white;
-
-        padding: 1.35rem;
-
-        border-radius: 20px;
-
-        border: 1px solid #e2e8f0;
-
-        box-shadow:
-            0 8px 25px rgba(15, 23, 42, 0.045);
-
-        margin-bottom: 1.2rem;
-    }
-
-    .input-card-title {
-        font-size: 1.05rem;
-        font-weight: 800;
-        color: #0f172a;
-        margin-bottom: 0.2rem;
-    }
-
-    .input-card-description {
-        font-size: 0.82rem;
-        color: #64748b;
-        margin-bottom: 1rem;
-    }
-
-
-    /* =====================================================
-       BUTTON
-    ===================================================== */
-
-    div.stButton > button {
-
-        height: 3.5rem;
-
-        border-radius: 16px;
-
-        border: none;
-
-        background:
-            linear-gradient(
-                135deg,
-                #0f766e,
-                #0f4c81
-            );
-
-        color: white;
-
-        font-size: 1.05rem;
-
-        font-weight: 800;
-
-        letter-spacing: 0.2px;
-
-        box-shadow:
-            0 10px 25px rgba(15,118,110,0.22);
-
-        transition: all 0.2s ease;
-    }
-
-    div.stButton > button:hover {
-
-        transform: translateY(-2px);
-
-        box-shadow:
-            0 14px 30px rgba(15,118,110,0.30);
-    }
-
-
-    /* =====================================================
-       RESULT CARD
-    ===================================================== */
-
-    .result-card {
-
-        background: white;
-
-        border-radius: 26px;
-
-        padding: 2.3rem;
-
-        text-align: center;
-
-        border: 1px solid #e2e8f0;
-
-        box-shadow:
-            0 18px 45px rgba(15,23,42,0.08);
-
-        margin-top: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .result-caption {
-
-        color: #64748b;
-
-        font-size: 0.78rem;
-
-        font-weight: 800;
-
-        text-transform: uppercase;
-
-        letter-spacing: 1.5px;
-    }
-
-    .risk-score {
-
-        font-size: 4rem;
-
-        font-weight: 900;
-
-        color: #0f172a;
-
-        line-height: 1.1;
-
-        margin-top: 0.5rem;
-    }
-
-    .risk-label {
-
-        font-size: 1.3rem;
-
-        font-weight: 800;
-
-        margin-top: 0.5rem;
-    }
-
-
-    /* =====================================================
-       METRICS
-    ===================================================== */
-
-    .metric-card {
-
-        background: white;
-
-        border-radius: 18px;
-
-        padding: 1.25rem;
-
-        text-align: center;
-
-        border: 1px solid #e2e8f0;
-
-        box-shadow:
-            0 6px 20px rgba(15,23,42,0.05);
-    }
-
-    .metric-label {
-
-        color: #64748b;
-
-        font-size: 0.78rem;
-
-        font-weight: 700;
-
-        text-transform: uppercase;
-
-        letter-spacing: 0.4px;
-    }
-
-    .metric-value {
-
-        color: #0f172a;
-
-        font-size: 1.75rem;
-
-        font-weight: 900;
-
-        margin-top: 0.3rem;
-    }
-
-
-    /* =====================================================
-       FOOTER
-    ===================================================== */
-
-    .footer {
-
-        text-align: center;
-
-        color: #64748b;
-
-        font-size: 0.82rem;
-
-        margin-top: 3rem;
-
-        padding-top: 1.5rem;
-
-        border-top: 1px solid #e2e8f0;
-    }
-
-
-    /* =====================================================
-       MOBILE
-    ===================================================== */
-
-    @media (max-width: 768px) {
-
-        .hero-title {
-            font-size: 2.1rem;
-        }
-
-        .hero {
-            padding: 1.6rem;
-        }
-
-        .risk-score {
-            font-size: 3rem;
-        }
-
-    }
-
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-
-# =========================================================
 # LOAD MODEL
 # =========================================================
 
@@ -395,118 +30,56 @@ MODEL_PATH = os.path.join(
 )
 
 try:
-
     model = joblib.load(MODEL_PATH)
 
 except Exception as e:
-
-    st.error(
-        f"❌ Could not load the model: {e}"
-    )
-
+    st.error(f"❌ Could not load the model: {e}")
     st.stop()
 
 
 # =========================================================
-# HERO HEADER
+# HEADER
 # =========================================================
 
-hero_col1, hero_col2 = st.columns(
-    [4, 1],
-    vertical_alignment="center"
+st.title("❤️ HealthSense AI")
+
+st.subheader(
+    "Intelligent Heart Disease Risk Assessment"
 )
 
-with hero_col1:
+st.write(
+    "An AI-powered machine learning application that "
+    "analyzes clinical patient information and estimates "
+    "the likelihood of heart disease."
+)
 
-    st.markdown(
-        """
-        <div class="hero">
+header_col1, header_col2, header_col3, header_col4 = st.columns(4)
 
-            <div class="hero-title">
-                ❤️ HealthSense AI
-            </div>
+with header_col1:
+    st.info("✦ AI-POWERED")
 
-            <div class="hero-subtitle">
-                Intelligent Heart Disease Risk Assessment
-            </div>
+with header_col2:
+    st.success("🌲 RANDOM FOREST")
 
-            <div class="hero-description">
-                An AI-powered machine learning application that
-                analyzes clinical patient information and estimates
-                the likelihood of heart disease.
-            </div>
+with header_col3:
+    st.info("⚡ STREAMLIT")
 
-            <span class="badge">
-                ✦ AI-POWERED
-            </span>
+with header_col4:
+    st.success("🟢 MODEL ONLINE")
 
-            <span class="badge">
-                🌲 RANDOM FOREST
-            </span>
-
-            <span class="badge">
-                ⚡ STREAMLIT
-            </span>
-
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-
-with hero_col2:
-
-    st.markdown(
-        """
-        <div class="hero">
-
-            <div class="status-card">
-
-                <div class="status-title">
-                    Model Status
-                </div>
-
-                <div class="status-value">
-                    🟢 Online
-                </div>
-
-            </div>
-
-            <div class="status-card">
-
-                <div class="status-title">
-                    Model Type
-                </div>
-
-                <div class="status-value">
-                    Random Forest
-                </div>
-
-            </div>
-
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+st.divider()
 
 
 # =========================================================
-# INTRODUCTION
+# PATIENT ASSESSMENT
 # =========================================================
 
-st.markdown(
-    """
-    <div class="section-title">
-        🩺 Patient Assessment
-    </div>
+st.header("🩺 Patient Assessment")
 
-    <div class="section-description">
-        Enter the patient's clinical information below.
-        The trained machine learning model will analyze the
-        information and generate a risk estimate.
-    </div>
-    """,
-    unsafe_allow_html=True
+st.write(
+    "Enter the patient's clinical information below. "
+    "The trained machine learning model will analyze "
+    "the information and generate a risk estimate."
 )
 
 
@@ -514,21 +87,10 @@ st.markdown(
 # BASIC INFORMATION
 # =========================================================
 
-st.markdown(
-    """
-    <div class="input-card">
+st.subheader("👤 Basic Information")
 
-        <div class="input-card-title">
-            👤 Basic Information
-        </div>
-
-        <div class="input-card-description">
-            Demographic and primary patient information
-        </div>
-
-    </div>
-    """,
-    unsafe_allow_html=True
+st.caption(
+    "Demographic and primary patient information."
 )
 
 col1, col2, col3 = st.columns(3)
@@ -548,7 +110,7 @@ with col2:
         "Sex",
         options=[0, 1],
         format_func=lambda x:
-            "Female" if x == 0 else "Male"
+        "Female" if x == 0 else "Male"
     )
 
 with col3:
@@ -559,25 +121,17 @@ with col3:
     )
 
 
+st.divider()
+
+
 # =========================================================
 # CLINICAL MEASUREMENTS
 # =========================================================
 
-st.markdown(
-    """
-    <div class="input-card">
+st.subheader("❤️ Clinical Measurements")
 
-        <div class="input-card-title">
-            ❤️ Clinical Measurements
-        </div>
-
-        <div class="input-card-description">
-            Cardiovascular measurements and vital indicators
-        </div>
-
-    </div>
-    """,
-    unsafe_allow_html=True
+st.caption(
+    "Cardiovascular measurements and vital indicators."
 )
 
 col1, col2, col3 = st.columns(3)
@@ -610,25 +164,17 @@ with col3:
     )
 
 
+st.divider()
+
+
 # =========================================================
 # CARDIAC ASSESSMENT
 # =========================================================
 
-st.markdown(
-    """
-    <div class="input-card">
+st.subheader("🫀 Cardiac Assessment")
 
-        <div class="input-card-title">
-            🫀 Cardiac Assessment
-        </div>
-
-        <div class="input-card-description">
-            Additional clinical indicators used by the model
-        </div>
-
-    </div>
-    """,
-    unsafe_allow_html=True
+st.caption(
+    "Additional clinical indicators used by the model."
 )
 
 col1, col2, col3, col4 = st.columns(4)
@@ -639,7 +185,7 @@ with col1:
         "Fasting Blood Sugar > 120",
         options=[0, 1],
         format_func=lambda x:
-            "No" if x == 0 else "Yes"
+        "No" if x == 0 else "Yes"
     )
 
 with col2:
@@ -655,7 +201,7 @@ with col3:
         "Exercise Induced Angina",
         options=[0, 1],
         format_func=lambda x:
-            "No" if x == 0 else "Yes"
+        "No" if x == 0 else "Yes"
     )
 
 with col4:
@@ -693,14 +239,15 @@ with col3:
     )
 
 
+st.divider()
+
+
 # =========================================================
 # PREDICTION BUTTON
 # =========================================================
 
-st.write("")
-
 predict_button = st.button(
-    "🔍  ANALYZE HEART HEALTH",
+    "🔍 ANALYZE HEART HEALTH",
     use_container_width=True
 )
 
@@ -711,9 +258,9 @@ predict_button = st.button(
 
 if predict_button:
 
-    # -----------------------------------------------------
+    # =====================================================
     # CREATE INPUT DATA
-    # -----------------------------------------------------
+    # =====================================================
 
     input_data = pd.DataFrame(
         [[
@@ -749,9 +296,9 @@ if predict_button:
     )
 
 
-    # -----------------------------------------------------
+    # =====================================================
     # MODEL PREDICTION
-    # -----------------------------------------------------
+    # =====================================================
 
     try:
 
@@ -784,66 +331,35 @@ if predict_button:
 
 
     # =====================================================
-    # RESULT
+    # PREDICTION RESULT
     # =====================================================
 
     st.divider()
 
-    st.markdown(
-        """
-        <div class="section-title">
-            📊 Prediction Result
-        </div>
-
-        <div class="section-description">
-            AI-generated risk estimation based on the provided
-            clinical information.
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-
-    # -----------------------------------------------------
-    # RESULT STATUS
-    # -----------------------------------------------------
+    st.header("📊 Prediction Result")
 
     if prediction == 1:
 
-        result_icon = "⚠️"
-        result_label = "Higher Risk of Heart Disease Detected"
+        st.error(
+            "⚠️ Higher Risk of Heart Disease Detected"
+        )
 
     else:
 
-        result_icon = "✅"
-        result_label = "Lower Risk of Heart Disease Detected"
+        st.success(
+            "✅ Lower Risk of Heart Disease Detected"
+        )
 
 
-    # -----------------------------------------------------
-    # RESULT CARD
-    # -----------------------------------------------------
+    # =====================================================
+    # RISK SCORE
+    # =====================================================
 
     if risk_probability is not None:
 
-        st.markdown(
-            f"""
-            <div class="result-card">
-
-                <div class="result-caption">
-                    Heart Disease Risk Score
-                </div>
-
-                <div class="risk-score">
-                    {risk_probability:.2f}%
-                </div>
-
-                <div class="risk-label">
-                    {result_icon} {result_label}
-                </div>
-
-            </div>
-            """,
-            unsafe_allow_html=True
+        st.metric(
+            label="Heart Disease Risk Score",
+            value=f"{risk_probability:.2f}%"
         )
 
         st.progress(
@@ -877,18 +393,18 @@ if predict_button:
 
 
     # =====================================================
-    # PATIENT SUMMARY
+    # TAB 1 — PATIENT SUMMARY
     # =====================================================
 
     with tab_patient:
 
-        st.markdown(
-            "### 📋 Patient Summary"
+        st.subheader(
+            "📋 Patient Summary"
         )
 
-        col1, col2, col3 = st.columns(3)
+        summary_col1, summary_col2, summary_col3 = st.columns(3)
 
-        with col1:
+        with summary_col1:
 
             st.write(
                 f"**Age:** {age}"
@@ -903,7 +419,7 @@ if predict_button:
                 f"**Cholesterol:** {chol}"
             )
 
-        with col2:
+        with summary_col2:
 
             st.write(
                 f"**Blood Pressure:** "
@@ -920,7 +436,7 @@ if predict_button:
                 f"{cp}"
             )
 
-        with col3:
+        with summary_col3:
 
             st.write(
                 f"**Exercise Angina:** "
@@ -939,27 +455,28 @@ if predict_button:
 
 
         st.warning(
-            "⚠️ This prediction is generated by a Machine "
-            "Learning model for educational and research "
-            "purposes only. It is not a medical diagnosis "
-            "and should not replace professional medical advice."
+            "⚠️ This prediction is generated by a "
+            "Machine Learning model for educational "
+            "and research purposes only. It is not a "
+            "medical diagnosis and should not replace "
+            "professional medical advice."
         )
 
 
     # =====================================================
-    # EXPLAINABLE AI
+    # TAB 2 — EXPLAINABLE AI
     # =====================================================
 
     with tab_xai:
 
-        st.markdown(
-            "### 🧠 Explainable AI"
+        st.subheader(
+            "🧠 Explainable AI"
         )
 
         st.write(
-            "Feature importance shows how strongly each "
-            "clinical feature contributed to the Random "
-            "Forest model's decisions overall."
+            "These are the clinical features that had "
+            "the greatest overall influence on the "
+            "Random Forest model."
         )
 
 
@@ -987,279 +504,251 @@ if predict_button:
         feature_names = {
 
             "age":
-                "Age",
+            "Age",
 
             "sex":
-                "Sex",
+            "Sex",
 
             "cp":
-                "Chest Pain Type",
+            "Chest Pain Type",
 
             "trestbps":
-                "Resting Blood Pressure",
+            "Resting Blood Pressure",
 
             "chol":
-                "Cholesterol",
+            "Cholesterol",
 
             "fbs":
-                "Fasting Blood Sugar",
+            "Fasting Blood Sugar",
 
             "restecg":
-                "Resting ECG",
+            "Resting ECG",
 
             "thalach":
-                "Maximum Heart Rate",
+            "Maximum Heart Rate",
 
             "exang":
-                "Exercise Induced Angina",
+            "Exercise Induced Angina",
 
             "oldpeak":
-                "ST Depression",
+            "ST Depression",
 
             "slope":
-                "ST Slope",
+            "ST Slope",
 
             "ca":
-                "Major Vessels",
+            "Major Vessels",
 
             "thal":
-                "Thal"
+            "Thal"
         }
 
 
         # -------------------------------------------------
-        # IMPORTANCE DATA
+        # FEATURE IMPORTANCE
         # -------------------------------------------------
 
-        importance_df = pd.DataFrame(
-            {
-                "Feature":
-                    features,
+        try:
 
-                "Importance":
-                    model.feature_importances_
-            }
-        )
+            feature_importances = (
+                model.feature_importances_
+            )
 
+        except AttributeError:
 
-        importance_df = importance_df.sort_values(
-            by="Importance",
-            ascending=False
-        )
+            st.warning(
+                "Feature importance is not available "
+                "for this model."
+            )
 
-
-        # -------------------------------------------------
-        # TOP 5
-        # -------------------------------------------------
-
-        st.markdown(
-            "#### 🔝 Top 5 Important Factors"
-        )
-
-        top5 = importance_df.head(
-            5
-        ).copy()
+            feature_importances = None
 
 
-        top5["Feature"] = top5[
-            "Feature"
-        ].map(
-            feature_names
-        )
+        if feature_importances is not None:
+
+            importance_df = pd.DataFrame(
+                {
+                    "Feature": features,
+                    "Importance": feature_importances
+                }
+            )
 
 
-        top5["Importance (%)"] = (
-            top5["Importance"] * 100
-        ).round(2)
+            importance_df = importance_df.sort_values(
+                by="Importance",
+                ascending=False
+            )
 
 
-        top5 = top5[
-            [
-                "Feature",
-                "Importance (%)"
+            # ---------------------------------------------
+            # TOP 5
+            # ---------------------------------------------
+
+            st.markdown(
+                "### 🔝 Top 5 Important Factors"
+            )
+
+            top5 = importance_df.head(
+                5
+            ).copy()
+
+
+            top5["Feature"] = top5[
+                "Feature"
+            ].map(
+                feature_names
+            )
+
+
+            top5["Importance (%)"] = (
+                top5["Importance"] * 100
+            ).round(2)
+
+
+            top5 = top5[
+                [
+                    "Feature",
+                    "Importance (%)"
+                ]
             ]
-        ]
 
 
-        st.dataframe(
-            top5,
-            use_container_width=True,
-            hide_index=True
-        )
+            st.dataframe(
+                top5,
+                use_container_width=True,
+                hide_index=True
+            )
 
 
-        # -------------------------------------------------
-        # CHART
-        # -------------------------------------------------
+            # ---------------------------------------------
+            # CHART
+            # ---------------------------------------------
 
-        st.markdown(
-            "#### 📊 Feature Importance Chart"
-        )
+            st.markdown(
+                "### 📊 Feature Importance Chart"
+            )
 
-
-        chart_df = importance_df.copy()
-
-
-        chart_df["Feature"] = chart_df[
-            "Feature"
-        ].map(
-            feature_names
-        )
+            chart_df = importance_df.copy()
 
 
-        chart_df = chart_df.sort_values(
-            by="Importance",
-            ascending=True
-        )
+            chart_df["Feature"] = chart_df[
+                "Feature"
+            ].map(
+                feature_names
+            )
 
 
-        fig, ax = plt.subplots(
-            figsize=(9, 6)
-        )
+            chart_df = chart_df.sort_values(
+                by="Importance",
+                ascending=True
+            )
 
 
-        ax.barh(
-            chart_df["Feature"],
-            chart_df["Importance"]
-        )
+            fig, ax = plt.subplots(
+                figsize=(9, 6)
+            )
 
 
-        ax.set_xlabel(
-            "Importance"
-        )
-
-        ax.set_ylabel(
-            "Clinical Feature"
-        )
-
-        ax.set_title(
-            "Random Forest Feature Importance"
-        )
+            ax.barh(
+                chart_df["Feature"],
+                chart_df["Importance"]
+            )
 
 
-        plt.tight_layout()
+            ax.set_xlabel(
+                "Importance"
+            )
+
+            ax.set_ylabel(
+                "Clinical Feature"
+            )
+
+            ax.set_title(
+                "Random Forest Feature Importance"
+            )
 
 
-        st.pyplot(
-            fig
-        )
+            plt.tight_layout()
 
 
-        plt.close(
-            fig
-        )
+            st.pyplot(
+                fig
+            )
 
 
-        st.info(
-            "💡 Feature importance represents the overall "
-            "contribution of each feature to the model's "
-            "decisions. It does not mean that a feature "
-            "directly causes heart disease or represents "
-            "an individual's medical risk by itself."
-        )
+            plt.close(
+                fig
+            )
+
+
+            st.info(
+                "💡 Feature importance shows how strongly "
+                "each feature contributed to the Random "
+                "Forest model's decisions overall. It does "
+                "not mean that a feature directly causes "
+                "heart disease."
+            )
 
 
     # =====================================================
-    # MODEL PERFORMANCE
+    # TAB 3 — MODEL PERFORMANCE
     # =====================================================
 
     with tab_performance:
 
-        st.markdown(
-            "### 📊 Model Performance"
+        st.subheader(
+            "📊 Model Performance"
         )
 
         st.write(
-            "Evaluation results obtained from the tuned "
-            "Random Forest model on the clean test dataset."
+            "The following metrics were obtained by "
+            "evaluating the tuned Random Forest model "
+            "on the clean test dataset."
         )
 
 
         # -------------------------------------------------
-        # METRICS
+        # PERFORMANCE METRICS
         # -------------------------------------------------
 
         metric_col1, metric_col2, metric_col3, metric_col4, metric_col5 = st.columns(5)
 
 
-        metrics = [
+        metric_col1.metric(
+            "Accuracy",
+            "78.69%"
+        )
 
-            (
-                "Accuracy",
-                "78.69%"
-            ),
+        metric_col2.metric(
+            "Precision",
+            "81.25%"
+        )
 
-            (
-                "Precision",
-                "81.25%"
-            ),
+        metric_col3.metric(
+            "Recall",
+            "78.79%"
+        )
 
-            (
-                "Recall",
-                "78.79%"
-            ),
+        metric_col4.metric(
+            "F1-Score",
+            "80.00%"
+        )
 
-            (
-                "F1-Score",
-                "80.00%"
-            ),
-
-            (
-                "ROC-AUC",
-                "85.93%"
-            )
-
-        ]
+        metric_col5.metric(
+            "ROC-AUC",
+            "85.93%"
+        )
 
 
-        metric_columns = [
-
-            metric_col1,
-            metric_col2,
-            metric_col3,
-            metric_col4,
-            metric_col5
-
-        ]
-
-
-        for column, (
-            label,
-            value
-        ) in zip(
-            metric_columns,
-            metrics
-        ):
-
-            with column:
-
-                st.markdown(
-                    f"""
-                    <div class="metric-card">
-
-                        <div class="metric-label">
-                            {label}
-                        </div>
-
-                        <div class="metric-value">
-                            {value}
-                        </div>
-
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
-
-
-        st.write("")
+        st.divider()
 
 
         # -------------------------------------------------
         # CONFUSION MATRIX
         # -------------------------------------------------
 
-        st.markdown(
-            "#### 🔢 Confusion Matrix"
+        st.subheader(
+            "🔢 Confusion Matrix"
         )
 
 
@@ -1317,11 +806,11 @@ if predict_button:
 
 
         # -------------------------------------------------
-        # METRIC EXPLANATION
+        # EVALUATION SUMMARY
         # -------------------------------------------------
 
-        st.markdown(
-            "#### 📈 Evaluation Summary"
+        st.subheader(
+            "📈 Model Evaluation Summary"
         )
 
 
@@ -1360,25 +849,18 @@ if predict_button:
 # FOOTER
 # =========================================================
 
-st.markdown(
-    """
-    <div class="footer">
+st.divider()
 
-        <strong>❤️ HealthSense AI</strong>
+st.caption(
+    "❤️ HealthSense AI | Heart Disease Prediction"
+)
 
-        <br>
+st.caption(
+    "Built with Python • Pandas • NumPy • Scikit-learn • "
+    "Joblib • Matplotlib • Streamlit"
+)
 
-        Intelligent Heart Disease Risk Assessment
-
-        <br><br>
-
-        Built with Python • Scikit-learn • Streamlit
-
-        <br><br>
-
-        ⚠️ Educational & Research Purposes Only
-
-    </div>
-    """,
-    unsafe_allow_html=True
+st.caption(
+    "⚠️ For educational and research purposes only. "
+    "This application is not a medical diagnosis."
 )
