@@ -239,7 +239,7 @@ Potential future improvements include:
 
 **Adham El Sayed**
 
-Computer Engineering Student | Data Analyst | AI & Machine Learning Enthusiast
+Computer Engineering | Data Analyst | AI & Machine Learning Enthusiast
 
 ---
 
