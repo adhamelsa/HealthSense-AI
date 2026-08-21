@@ -2,14 +2,11 @@ import streamlit as st
 import pandas as pd
 import joblib
 import os
+import numpy as np
 import matplotlib.pyplot as plt
 
-from sklearn.metrics import (
-    confusion_matrix,
-    ConfusionMatrixDisplay,
-    roc_curve,
-    auc
-)
+from sklearn.metrics import ConfusionMatrixDisplay
+
 
 # =========================================================
 # PAGE CONFIGURATION
@@ -20,6 +17,7 @@ st.set_page_config(
     page_icon="❤️",
     layout="wide"
 )
+
 
 # =========================================================
 # LOAD MODEL
@@ -32,9 +30,11 @@ MODEL_PATH = os.path.join(
 
 try:
     model = joblib.load(MODEL_PATH)
+
 except Exception as e:
     st.error(f"❌ Could not load the model: {e}")
     st.stop()
+
 
 # =========================================================
 # HEADER
@@ -54,6 +54,7 @@ st.write(
 
 st.divider()
 
+
 # =========================================================
 # PATIENT INFORMATION
 # =========================================================
@@ -62,9 +63,10 @@ st.subheader("👤 Patient Information")
 
 col1, col2, col3 = st.columns(3)
 
-# -------------------------
-# Column 1
-# -------------------------
+
+# =========================================================
+# COLUMN 1
+# =========================================================
 
 with col1:
 
@@ -100,9 +102,10 @@ with col1:
         value=200
     )
 
-# -------------------------
-# Column 2
-# -------------------------
+
+# =========================================================
+# COLUMN 2
+# =========================================================
 
 with col2:
 
@@ -130,9 +133,10 @@ with col2:
         format_func=lambda x: "No" if x == 0 else "Yes"
     )
 
-# -------------------------
-# Column 3
-# -------------------------
+
+# =========================================================
+# COLUMN 3
+# =========================================================
 
 with col3:
 
@@ -159,7 +163,9 @@ with col3:
         options=[0, 1, 2, 3]
     )
 
+
 st.divider()
+
 
 # =========================================================
 # PREDICTION BUTTON
@@ -171,7 +177,7 @@ if st.button(
 ):
 
     # =====================================================
-    # CREATE INPUT DATAFRAME
+    # CREATE INPUT DATA
     # =====================================================
 
     input_data = pd.DataFrame(
@@ -215,7 +221,6 @@ if st.button(
 
         prediction = model.predict(input_data)[0]
 
-        # Get probability if supported
         if hasattr(model, "predict_proba"):
 
             probabilities = model.predict_proba(input_data)[0]
@@ -231,17 +236,14 @@ if st.button(
         st.error(f"❌ Prediction Error: {e}")
         st.stop()
 
+
     # =====================================================
-    # RESULT
+    # PREDICTION RESULT
     # =====================================================
 
     st.divider()
 
     st.subheader("🩺 Prediction Result")
-
-    # =====================================================
-    # HIGH RISK
-    # =====================================================
 
     if prediction == 1:
 
@@ -249,47 +251,34 @@ if st.button(
             "⚠️ Higher Risk of Heart Disease Detected"
         )
 
-        if risk_probability is not None:
-
-            st.metric(
-                label="Heart Disease Risk Score",
-                value=f"{risk_probability:.2f}%"
-            )
-
-            st.progress(
-                min(max(risk_probability / 100, 0.0), 1.0)
-            )
-
-            st.write(
-                f"The model estimates a **{risk_probability:.2f}%** "
-                "probability for the positive class."
-            )
-
-    # =====================================================
-    # LOW RISK
-    # =====================================================
-
     else:
 
         st.success(
             "✅ Lower Risk of Heart Disease Detected"
         )
 
-        if risk_probability is not None:
+    if risk_probability is not None:
 
-            st.metric(
-                label="Heart Disease Risk Score",
-                value=f"{risk_probability:.2f}%"
-            )
+        st.metric(
+            label="Heart Disease Risk Score",
+            value=f"{risk_probability:.2f}%"
+        )
 
-            st.progress(
-                min(max(risk_probability / 100, 0.0), 1.0)
+        st.progress(
+            min(
+                max(
+                    risk_probability / 100,
+                    0.0
+                ),
+                1.0
             )
+        )
 
-            st.write(
-                f"The model estimates a **{risk_probability:.2f}%** "
-                "probability for the positive class."
-            )
+        st.write(
+            f"The model estimates a **{risk_probability:.2f}%** "
+            "probability for the positive class."
+        )
+
 
     # =====================================================
     # PATIENT SUMMARY
@@ -301,10 +290,6 @@ if st.button(
 
     summary_col1, summary_col2, summary_col3 = st.columns(3)
 
-    # -------------------------
-    # Summary Column 1
-    # -------------------------
-
     with summary_col1:
 
         st.write(f"**Age:** {age}")
@@ -313,11 +298,9 @@ if st.button(
             f"**Sex:** {'Male' if sex == 1 else 'Female'}"
         )
 
-        st.write(f"**Cholesterol:** {chol}")
-
-    # -------------------------
-    # Summary Column 2
-    # -------------------------
+        st.write(
+            f"**Cholesterol:** {chol}"
+        )
 
     with summary_col2:
 
@@ -333,10 +316,6 @@ if st.button(
             f"**Chest Pain Type:** {cp}"
         )
 
-    # -------------------------
-    # Summary Column 3
-    # -------------------------
-
     with summary_col3:
 
         st.write(
@@ -350,6 +329,7 @@ if st.button(
         st.write(
             f"**Major Vessels:** {ca}"
         )
+
 
     # =====================================================
     # DISCLAIMER
@@ -375,6 +355,11 @@ st.write(
     "These are the clinical features that had the greatest "
     "overall influence on the Random Forest model."
 )
+
+
+# =========================================================
+# FEATURES
+# =========================================================
 
 features = [
     "age",
@@ -408,6 +393,11 @@ feature_names = {
     "thal": "Thal"
 }
 
+
+# =========================================================
+# FEATURE IMPORTANCE DATA
+# =========================================================
+
 importance_df = pd.DataFrame({
     "Feature": features,
     "Importance": model.feature_importances_
@@ -417,6 +407,92 @@ importance_df = importance_df.sort_values(
     by="Importance",
     ascending=False
 )
+
+
+# =========================================================
+# TOP 5 FEATURES
+# =========================================================
+
+st.markdown("### 🔝 Top 5 Important Factors")
+
+top5 = importance_df.head(5).copy()
+
+top5["Feature"] = top5["Feature"].map(
+    feature_names
+)
+
+top5["Importance (%)"] = (
+    top5["Importance"] * 100
+).round(2)
+
+top5 = top5[
+    [
+        "Feature",
+        "Importance (%)"
+    ]
+]
+
+st.dataframe(
+    top5,
+    use_container_width=True,
+    hide_index=True
+)
+
+
+# =========================================================
+# FEATURE IMPORTANCE CHART
+# =========================================================
+
+st.markdown("### 📊 Feature Importance Chart")
+
+chart_df = importance_df.copy()
+
+chart_df["Feature"] = chart_df["Feature"].map(
+    feature_names
+)
+
+chart_df = chart_df.sort_values(
+    by="Importance",
+    ascending=True
+)
+
+fig, ax = plt.subplots(
+    figsize=(9, 6)
+)
+
+ax.barh(
+    chart_df["Feature"],
+    chart_df["Importance"]
+)
+
+ax.set_xlabel(
+    "Importance"
+)
+
+ax.set_ylabel(
+    "Clinical Feature"
+)
+
+ax.set_title(
+    "Random Forest Feature Importance"
+)
+
+plt.tight_layout()
+
+st.pyplot(fig)
+
+
+# =========================================================
+# EXPLANATION NOTE
+# =========================================================
+
+st.info(
+    "💡 Feature importance shows how strongly each feature "
+    "contributed to the Random Forest model's decisions overall. "
+    "It does not mean that a feature directly causes heart disease "
+    "or represents an individual patient's medical risk by itself."
+)
+
 
 # =========================================================
 # MODEL PERFORMANCE DASHBOARD
@@ -431,7 +507,11 @@ st.write(
     "tuned Random Forest model on the clean test dataset."
 )
 
-# Performance metrics
+
+# =========================================================
+# PERFORMANCE METRICS
+# =========================================================
+
 metric_col1, metric_col2, metric_col3, metric_col4, metric_col5 = st.columns(5)
 
 metric_col1.metric(
@@ -459,7 +539,9 @@ metric_col5.metric(
     "85.93%"
 )
 
+
 st.divider()
+
 
 # =========================================================
 # CONFUSION MATRIX
@@ -467,17 +549,24 @@ st.divider()
 
 st.subheader("🔢 Confusion Matrix")
 
-# Results from the clean test set
-cm = [
+# Important:
+# NumPy array is required here
+
+cm = np.array([
     [22, 6],
     [7, 26]
-]
+])
 
-fig_cm, ax_cm = plt.subplots(figsize=(6, 5))
+fig_cm, ax_cm = plt.subplots(
+    figsize=(6, 5)
+)
 
 display = ConfusionMatrixDisplay(
     confusion_matrix=cm,
-    display_labels=["No Disease", "Heart Disease"]
+    display_labels=[
+        "No Disease",
+        "Heart Disease"
+    ]
 )
 
 display.plot(
@@ -486,16 +575,21 @@ display.plot(
     colorbar=False
 )
 
-ax_cm.set_title("Confusion Matrix")
+ax_cm.set_title(
+    "Confusion Matrix"
+)
 
 st.pyplot(fig_cm)
+
+plt.close(fig_cm)
 
 st.caption(
     "The model correctly classified 48 out of 61 test samples."
 )
 
+
 # =========================================================
-# PERFORMANCE EXPLANATION
+# MODEL EVALUATION SUMMARY
 # =========================================================
 
 st.subheader("📈 Model Evaluation Summary")
@@ -514,72 +608,4 @@ st.info(
     "These evaluation results were obtained after removing duplicate "
     "records from the dataset to reduce data leakage and provide a "
     "more realistic estimate of model performance."
-)
-# =========================================================
-# TOP 5 FEATURES
-# =========================================================
-
-st.markdown("### 🔝 Top 5 Important Factors")
-
-top5 = importance_df.head(5).copy()
-
-top5["Feature"] = top5["Feature"].map(feature_names)
-
-top5["Importance (%)"] = (
-    top5["Importance"] * 100
-).round(2)
-
-top5 = top5[
-    ["Feature", "Importance (%)"]
-]
-
-st.dataframe(
-    top5,
-    use_container_width=True,
-    hide_index=True
-)
-
-# =========================================================
-# FEATURE IMPORTANCE CHART
-# =========================================================
-
-st.markdown("### 📊 Feature Importance Chart")
-
-chart_df = importance_df.copy()
-
-chart_df["Feature"] = chart_df["Feature"].map(
-    feature_names
-)
-
-chart_df = chart_df.sort_values(
-    by="Importance",
-    ascending=True
-)
-
-fig, ax = plt.subplots(figsize=(9, 6))
-
-ax.barh(
-    chart_df["Feature"],
-    chart_df["Importance"]
-)
-
-ax.set_xlabel("Importance")
-ax.set_ylabel("Clinical Feature")
-ax.set_title(
-    "Random Forest Feature Importance"
-)
-
-plt.tight_layout()
-
-st.pyplot(fig)
-
-# =========================================================
-# EXPLANATION NOTE
-# =========================================================
-
-st.info(
-    "💡 Feature importance shows how strongly each feature "
-    "contributed to the Random Forest model's decisions overall. "
-    "It does not mean that a feature directly causes heart disease "
-    "or represents an individual patient's medical risk by itself."
 )
